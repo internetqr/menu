@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>AI CORE</title>
+
+  <style>
+    *{
+      margin:0;
+      padding:0;
+      box-sizing:border-box;
+      font-family: Consolas, monospace;
+    }
+
+    body{
+      background:#000;
+      color:#00ff88;
+      overflow:hidden;
+      height:100vh;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+    }
+
+    #screen{
+      width:100%;
+      max-width:900px;
+      padding:20px;
+    }
+
+    #terminal{
+      white-space:pre-line;
+      font-size:1rem;
+      line-height:1.6;
+      text-shadow:0 0 8px #00ff88;
+    }
+
+    .glitch{
+      animation: glitch 0.15s infinite;
+    }
+
+    @keyframes glitch{
+      0% { transform: translate(1px, -1px); }
+      25% { transform: translate(-1px, 1px); }
+      50% { transform: translate(1px, 1px); }
+      75% { transform: translate(-1px, -1px); }
+      100% { transform: translate(0px, 0px); }
+    }
+
+    .redFlash{
+      animation: redflash 0.3s infinite;
+    }
+
+    @keyframes redflash{
+      0%{ background:#000; }
+      50%{ background:#250000; }
+      100%{ background:#000; }
+    }
+
+    #startBtn{
+      background:#00ff88;
+      color:#000;
+      border:none;
+      padding:15px 30px;
+      font-size:1rem;
+      cursor:pointer;
+      font-weight:bold;
+      border-radius:8px;
+      margin-top:20px;
+      box-shadow:0 0 20px #00ff88;
+    }
+
+    #final{
+      display:none;
+      text-align:center;
+      font-size:2rem;
+      color:white;
+      animation: pop 1s ease;
+    }
+
+    @keyframes pop{
+      from{
+        transform:scale(0.5);
+        opacity:0;
+      }
+      to{
+        transform:scale(1);
+        opacity:1;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div id="screen">
+
+  <div id="terminal">
+AI CORE v4.7
+
+Pulsa para iniciar análisis del dispositivo.
+  </div>
+
+  <button id="startBtn">INICIAR</button>
+
+  <div id="final">
+    😂 RELÁJATE 😂<br><br>
+    Era una broma.
+  </div>
+
+</div>
+
+<script>
+
+const terminal = document.getElementById("terminal");
+const btn = document.getElementById("startBtn");
+const final = document.getElementById("final");
+
+const batteryInfo = navigator.getBattery
+  ? navigator.getBattery()
+  : Promise.resolve({ level: 0.73 });
+
+btn.addEventListener("click", async () => {
+
+  btn.style.display = "none";
+
+  const battery = await batteryInfo;
+  const batteryPercent = Math.floor(battery.level * 100);
+
+  const userAgent = navigator.userAgent;
+  const lang = navigator.language;
+  const time = new Date().toLocaleTimeString();
+
+  const lines = [
+    "Inicializando núcleo...",
+    "Conectando con sistema del dispositivo...",
+    "Acceso parcial concedido...",
+    "",
+    "Detectando información del sistema...",
+    `Idioma detectado: ${lang}`,
+    `Batería detectada: ${batteryPercent}%`,
+    `Hora local: ${time}`,
+    "",
+    "Analizando comportamiento del usuario...",
+    "Sincronizando actividad reciente...",
+    "",
+    "⚠ ACTIVIDAD SOSPECHOSA DETECTADA ⚠",
+    "",
+    "No intentes cerrar esta ventana.",
+    "La IA está observando.",
+    "",
+    "Activando protocolos avanzados...",
+    "Escaneo facial iniciado...",
+    "Conectando con cámara frontal...",
+    "",
+    "ERROR_547_SECURITY_BREACH",
+    "",
+    "Has sido marcado por el sistema.",
+    "",
+    "Iniciando bloqueo del dispositivo en:",
+    "3...",
+    "2...",
+    "1..."
+  ];
+
+  terminal.innerHTML = "";
+
+  for (let i = 0; i < lines.length; i++) {
+
+    terminal.innerHTML += lines[i] + "\n";
+
+    if (navigator.vibrate) {
+      navigator.vibrate(80);
+    }
+
+    if (i > 10) {
+      document.body.classList.add("glitch");
+    }
+
+    if (i > 18) {
+      document.body.classList.add("redFlash");
+    }
+
+    await wait(random(700, 1400));
+  }
+
+  await wait(1500);
+
+  terminal.style.display = "none";
+  final.style.display = "block";
+
+  document.body.classList.remove("glitch");
+  document.body.classList.remove("redFlash");
+
+});
+
+function wait(ms){
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+function random(min,max){
+  return Math.floor(Math.random() * (max-min+1))+min;
+}
+
+</script>
+
+</body>
+</html>
