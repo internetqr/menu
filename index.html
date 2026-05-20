@@ -1,206 +1,360 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>AI CORE</title>
 
-  <style>
-    *{
-      margin:0;
-      padding:0;
-      box-sizing:border-box;
-      font-family: Consolas, monospace;
-    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#000000">
 
-    body{
-      background:#000;
-      color:#00ff88;
-      overflow:hidden;
-      height:100vh;
-      display:flex;
-      justify-content:center;
-      align-items:center;
-    }
+<title>SISTEMA IA</title>
 
-    #screen{
-      width:100%;
-      max-width:900px;
-      padding:20px;
-    }
+<style>
 
-    #terminal{
-      white-space:pre-line;
-      font-size:1rem;
-      line-height:1.6;
-      text-shadow:0 0 8px #00ff88;
-    }
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Consolas,monospace;
+}
 
-    .glitch{
-      animation: glitch 0.15s infinite;
-    }
+body{
+    background:black;
+    color:#00ff66;
+    overflow:hidden;
+    height:100vh;
+}
 
-    @keyframes glitch{
-      0% { transform: translate(1px, -1px); }
-      25% { transform: translate(-1px, 1px); }
-      50% { transform: translate(1px, 1px); }
-      75% { transform: translate(-1px, -1px); }
-      100% { transform: translate(0px, 0px); }
-    }
+#bg{
+    position:fixed;
+    inset:0;
+    background:
+    radial-gradient(circle at center,#002211,#000000 70%);
+}
 
-    .redFlash{
-      animation: redflash 0.3s infinite;
-    }
+#terminal{
 
-    @keyframes redflash{
-      0%{ background:#000; }
-      50%{ background:#250000; }
-      100%{ background:#000; }
-    }
+    position:absolute;
+    inset:0;
 
-    #startBtn{
-      background:#00ff88;
-      color:#000;
-      border:none;
-      padding:15px 30px;
-      font-size:1rem;
-      cursor:pointer;
-      font-weight:bold;
-      border-radius:8px;
-      margin-top:20px;
-      box-shadow:0 0 20px #00ff88;
-    }
+    padding:25px;
 
-    #final{
-      display:none;
-      text-align:center;
-      font-size:2rem;
-      color:white;
-      animation: pop 1s ease;
-    }
+    white-space:pre-line;
 
-    @keyframes pop{
-      from{
-        transform:scale(0.5);
-        opacity:0;
-      }
-      to{
-        transform:scale(1);
-        opacity:1;
-      }
+    line-height:1.7;
+
+    text-shadow:0 0 10px #00ff66;
+
+    font-size:1rem;
+}
+
+.btn{
+
+    margin-top:20px;
+
+    background:black;
+
+    color:#00ff66;
+
+    border:1px solid #00ff66;
+
+    padding:14px 22px;
+
+    font-size:1rem;
+
+    cursor:pointer;
+
+    width:100%;
+
+    max-width:320px;
+
+    transition:0.2s;
+}
+
+.btn:hover{
+    background:#00ff66;
+    color:black;
+}
+
+.glitch{
+    animation:glitch .08s infinite;
+}
+
+@keyframes glitch{
+
+    0%{transform:translate(2px,-1px);}
+    25%{transform:translate(-2px,1px);}
+    50%{transform:translate(1px,2px);}
+    75%{transform:translate(-1px,-2px);}
+    100%{transform:translate(0,0);}
+}
+
+.flash{
+    animation:flash .15s infinite;
+}
+
+@keyframes flash{
+
+    0%{background:black;}
+    50%{background:#220000;}
+    100%{background:black;}
+}
+
+#crash{
+
+    position:fixed;
+    inset:0;
+
+    background:black;
+
+    display:none;
+
+    justify-content:center;
+    align-items:center;
+    flex-direction:column;
+
+    z-index:999;
+
+    color:red;
+
+    text-align:center;
+
+    animation:shake .1s infinite;
+}
+
+@keyframes shake{
+
+    0%{transform:translate(2px,1px);}
+    25%{transform:translate(-2px,-1px);}
+    50%{transform:translate(3px,-2px);}
+    75%{transform:translate(-3px,2px);}
+    100%{transform:translate(0,0);}
+}
+
+#big{
+
+    font-size:4rem;
+
+    text-shadow:
+    0 0 20px red,
+    0 0 40px red;
+
+    animation:pulse .5s infinite;
+}
+
+@keyframes pulse{
+
+    50%{
+        transform:scale(1.08);
     }
-  </style>
+}
+
+#small{
+    margin-top:25px;
+    font-size:1rem;
+    color:white;
+}
+
+</style>
 </head>
+
 <body>
 
-<div id="screen">
+<div id="bg"></div>
 
-  <div id="terminal">
-AI CORE v4.7
+<div id="terminal"></div>
 
-Pulsa para iniciar análisis del dispositivo.
-  </div>
+<div id="crash">
 
-  <button id="startBtn">INICIAR</button>
+<div id="big">
+ERROR CRÍTICO
+</div>
 
-  <div id="final">
-    😂 RELÁJATE 😂<br><br>
-    Era una broma.
-  </div>
+<div id="small">
+EL SISTEMA HA SIDO COMPROMETIDO
+</div>
 
 </div>
 
 <script>
 
 const terminal = document.getElementById("terminal");
-const btn = document.getElementById("startBtn");
-const final = document.getElementById("final");
+const crash = document.getElementById("crash");
 
-const batteryInfo = navigator.getBattery
-  ? navigator.getBattery()
-  : Promise.resolve({ level: 0.73 });
+//////////////////////////////////////////////////////////////////
+// TYPE EFFECT
+//////////////////////////////////////////////////////////////////
 
-btn.addEventListener("click", async () => {
+async function type(text){
 
-  btn.style.display = "none";
+    for(let i=0;i<text.length;i++){
 
-  const battery = await batteryInfo;
-  const batteryPercent = Math.floor(battery.level * 100);
+        terminal.innerHTML += text[i];
 
-  const userAgent = navigator.userAgent;
-  const lang = navigator.language;
-  const time = new Date().toLocaleTimeString();
+        await sleep(25);
 
-  const lines = [
-    "Inicializando núcleo...",
-    "Conectando con sistema del dispositivo...",
-    "Acceso parcial concedido...",
-    "",
-    "Detectando información del sistema...",
-    `Idioma detectado: ${lang}`,
-    `Batería detectada: ${batteryPercent}%`,
-    `Hora local: ${time}`,
-    "",
-    "Analizando comportamiento del usuario...",
-    "Sincronizando actividad reciente...",
-    "",
-    "⚠ ACTIVIDAD SOSPECHOSA DETECTADA ⚠",
-    "",
-    "No intentes cerrar esta ventana.",
-    "La IA está observando.",
-    "",
-    "Activando protocolos avanzados...",
-    "Escaneo facial iniciado...",
-    "Conectando con cámara frontal...",
-    "",
-    "ERROR_547_SECURITY_BREACH",
-    "",
-    "Has sido marcado por el sistema.",
-    "",
-    "Iniciando bloqueo del dispositivo en:",
-    "3...",
-    "2...",
-    "1..."
-  ];
-
-  terminal.innerHTML = "";
-
-  for (let i = 0; i < lines.length; i++) {
-
-    terminal.innerHTML += lines[i] + "\n";
-
-    if (navigator.vibrate) {
-      navigator.vibrate(80);
     }
 
-    if (i > 10) {
-      document.body.classList.add("glitch");
-    }
-
-    if (i > 18) {
-      document.body.classList.add("redFlash");
-    }
-
-    await wait(random(700, 1400));
-  }
-
-  await wait(1500);
-
-  terminal.style.display = "none";
-  final.style.display = "block";
-
-  document.body.classList.remove("glitch");
-  document.body.classList.remove("redFlash");
-
-});
-
-function wait(ms){
-  return new Promise(resolve => setTimeout(resolve, ms));
+    terminal.innerHTML += "\n";
 }
 
-function random(min,max){
-  return Math.floor(Math.random() * (max-min+1))+min;
+//////////////////////////////////////////////////////////////////
+// START
+//////////////////////////////////////////////////////////////////
+
+async function start(){
+
+    await type("[NODO IA ENLAZADO]");
+    await sleep(500);
+
+    await type("Detectando actividad externa...");
+    await sleep(800);
+
+    await type("Dispositivo localizado.");
+    await sleep(1000);
+
+    terminal.innerHTML += `
+    
+    <button class="btn" onclick="scan()">
+    PERMITIR ESCANEO
+    </button>
+    
+    `;
 }
+
+//////////////////////////////////////////////////////////////////
+// SCAN
+//////////////////////////////////////////////////////////////////
+
+async function scan(){
+
+    document.querySelector(".btn").remove();
+
+    await type("");
+    await type("Escaneando sistema...");
+    await sleep(1200);
+
+    await type("Acceso parcial concedido.");
+    await sleep(800);
+
+    await type("⚠ Anomalía detectada.");
+    await sleep(1200);
+
+    terminal.innerHTML += `
+    
+    <button class="btn" onclick="continueProcess()">
+    CONTINUAR
+    </button>
+    
+    `;
+}
+
+//////////////////////////////////////////////////////////////////
+// CONTINUE
+//////////////////////////////////////////////////////////////////
+
+async function continueProcess(){
+
+    document.querySelector(".btn").remove();
+
+    document.body.classList.add("glitch");
+
+    await type("");
+    await type("Sincronizando cámara frontal...");
+    await sleep(1000);
+
+    await type("Intentando aislamiento del sistema...");
+    await sleep(1200);
+
+    await type("ERROR 547-A");
+    await sleep(1200);
+
+    await type("La IA ha tomado el control.");
+    await sleep(1400);
+
+    terminal.innerHTML += `
+    
+    <button class="btn" onclick="panic()">
+    CANCELAR PROCESO
+    </button>
+    
+    `;
+}
+
+//////////////////////////////////////////////////////////////////
+// FINAL
+//////////////////////////////////////////////////////////////////
+
+async function panic(){
+
+    document.querySelector(".btn").remove();
+
+    await type("");
+    await type("Cancelación denegada.");
+    await sleep(1000);
+
+    await type("⚠ BLOQUEO INICIADO ⚠");
+    await sleep(700);
+
+    document.body.classList.add("flash");
+
+    if(navigator.vibrate){
+
+        navigator.vibrate([
+            200,100,
+            200,100,
+            300,100,
+            500
+        ]);
+    }
+
+    await sleep(2500);
+
+    document.body.innerHTML += `
+    
+    <div style="
+    position:fixed;
+    inset:0;
+    background:
+    repeating-linear-gradient(
+    45deg,
+    transparent,
+    transparent 10px,
+    rgba(255,255,255,0.04) 10px,
+    rgba(255,255,255,0.04) 20px
+    );
+    z-index:998;
+    ">
+    </div>
+    
+    `;
+
+    crash.style.display="flex";
+
+}
+
+//////////////////////////////////////////////////////////////////
+// HELPERS
+//////////////////////////////////////////////////////////////////
+
+function sleep(ms){
+    return new Promise(r=>setTimeout(r,ms));
+}
+
+//////////////////////////////////////////////////////////////////
+// FULLSCREEN
+//////////////////////////////////////////////////////////////////
+
+document.body.addEventListener("click",()=>{
+
+    document.documentElement.requestFullscreen().catch(()=>{});
+
+},{once:true});
+
+//////////////////////////////////////////////////////////////////
+// INIT
+//////////////////////////////////////////////////////////////////
+
+start();
 
 </script>
 
