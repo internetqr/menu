@@ -3,10 +3,10 @@
 <head>
 
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta name="theme-color" content="#000000">
 
-<title>NEURAL CORE // CLASSIFIED</title>
+<title>NEURAL CORE</title>
 
 <style>
 
@@ -20,47 +20,55 @@
 body{
   background:black;
   color:#00ff88;
-  overflow:hidden;
   height:100vh;
+  overflow:hidden;
 }
 
-/* MATRIX BACKGROUND */
+/* MATRIX */
 canvas{
   position:fixed;
   inset:0;
-  opacity:0.12;
+  opacity:0.10;
 }
 
-/* SCAN OVERLAY */
-#scan{
-  position:fixed;
-  inset:0;
-  background:
-  radial-gradient(circle at center,transparent,rgba(0,255,136,0.05));
-  pointer-events:none;
-}
-
-/* TERMINAL */
+/* TERMINAL MOBILE SAFE */
 #terminal{
+
   position:absolute;
-  inset:0;
-  padding:20px;
-  white-space:pre-line;
-  line-height:1.6;
-  text-shadow:0 0 8px #00ff88;
-  z-index:2;
+  top:0;
+  left:0;
+  right:0;
+  bottom:0;
+
+  padding:16px;
+
+  font-size:0.95rem;
+  line-height:1.5;
+
+  white-space:pre-wrap;
+  word-break:break-word;
+
+  overflow-y:auto;
+
+  text-shadow:0 0 6px #00ff88;
 }
 
-/* BUTTON */
+/* BUTTON BIG MOBILE */
 .btn{
-  margin-top:15px;
+
+  margin-top:12px;
+
+  width:100%;
+  padding:16px;
+
+  font-size:1rem;
+
   background:black;
   border:1px solid #00ff88;
   color:#00ff88;
-  padding:14px;
-  width:100%;
-  max-width:320px;
-  cursor:pointer;
+
+  border-radius:8px;
+
 }
 
 /* GLITCH */
@@ -69,41 +77,41 @@ canvas{
 }
 
 @keyframes glitch{
-  0%{transform:translate(2px,-1px);}
-  50%{transform:translate(-2px,2px);}
+  0%{transform:translate(1px,-1px);}
+  50%{transform:translate(-1px,1px);}
   100%{transform:translate(0,0);}
 }
 
 /* RED ALERT */
 .red{
-  animation:redflash .2s infinite;
+  animation:red 0.2s infinite;
 }
 
-@keyframes redflash{
+@keyframes red{
   50%{background:#200000;}
 }
 
-/* FACE SCAN */
-#face{
+/* FAKE CAMERA */
+#cam{
   position:fixed;
   top:50%;
   left:50%;
   transform:translate(-50%,-50%);
-  width:180px;
-  height:180px;
+  width:140px;
+  height:140px;
   border:2px solid #00ff88;
   border-radius:50%;
   display:none;
-  animation:scanMove 2s infinite;
+  animation:scan 1.5s infinite;
 }
 
-@keyframes scanMove{
-  0%{box-shadow:0 -80px 20px rgba(0,255,136,0.2);}
-  50%{box-shadow:0 80px 20px rgba(0,255,136,0.2);}
-  100%{box-shadow:0 -80px 20px rgba(0,255,136,0.2);}
+@keyframes scan{
+  0%{box-shadow:0 -60px 20px rgba(0,255,136,0.2);}
+  50%{box-shadow:0 60px 20px rgba(0,255,136,0.2);}
+  100%{box-shadow:0 -60px 20px rgba(0,255,136,0.2);}
 }
 
-/* FINAL CRASH */
+/* FINAL */
 #crash{
   position:fixed;
   inset:0;
@@ -112,13 +120,12 @@ canvas{
   align-items:center;
   flex-direction:column;
   background:black;
-  z-index:999;
   color:red;
   text-align:center;
 }
 
 #crash h1{
-  font-size:4rem;
+  font-size:3rem;
   text-shadow:0 0 20px red;
   animation:pulse .4s infinite;
 }
@@ -133,15 +140,14 @@ canvas{
 <body>
 
 <canvas id="matrix"></canvas>
-<div id="scan"></div>
 
-<div id="face"></div>
+<div id="cam"></div>
 
 <div id="terminal"></div>
 
 <div id="crash">
-  <h1>SISTEMA COMPROMETIDO</h1>
-  <p style="color:white;margin-top:20px;">Neural Core desconectado</p>
+  <h1>ERROR</h1>
+  <p style="color:white;margin-top:15px;">Sistema detenido</p>
 </div>
 
 <script>
@@ -186,16 +192,14 @@ function draw(){
 setInterval(draw,35);
 
 //////////////////////////////////////////////////////
-// TERMINAL
+// CORE
 //////////////////////////////////////////////////////
 
 const terminal=document.getElementById("terminal");
-const face=document.getElementById("face");
-
-let stage=0;
+const cam=document.getElementById("cam");
 
 //////////////////////////////////////////////////////
-// VOZ IA
+// VOZ
 //////////////////////////////////////////////////////
 
 function speak(t){
@@ -209,67 +213,61 @@ function speak(t){
 }
 
 //////////////////////////////////////////////////////
-// TYPE
+// TYPE (CORTO PARA MÓVIL)
 //////////////////////////////////////////////////////
 
 async function type(t){
 
   for(let i=0;i<t.length;i++){
     terminal.innerHTML+=t[i];
-    await sleep(18);
+    terminal.scrollTop=terminal.scrollHeight;
+    await sleep(15);
   }
 
   terminal.innerHTML+="\n";
-  terminal.scrollTop=terminal.scrollHeight;
 }
 
 //////////////////////////////////////////////////////
-// INICIO
+// START
 //////////////////////////////////////////////////////
 
 async function start(){
 
-  await type("[NEURAL CORE ONLINE]");
-  speak("Neural core conectado");
+  await type("[CORE ONLINE]");
+  speak("Sistema activo");
 
-  await sleep(800);
+  await type("Usuario detectado");
 
-  await type("Analizando entorno...");
-
-  await type("Usuario detectado.");
-
-  button("INICIAR ESCANEO BIOMÉTRICO", scan);
+  button("INICIAR", scan);
 
 }
 
 //////////////////////////////////////////////////////
-// SCAN FACE SIMULADO
+// SCAN
 //////////////////////////////////////////////////////
 
 async function scan(){
 
   document.querySelector(".btn").remove();
 
-  face.style.display="block";
+  cam.style.display="block";
 
-  speak("Iniciando escaneo facial");
+  speak("Escaneo iniciado");
 
-  await type("Escaneo biométrico activo...");
+  await type("Escaneo activo");
 
-  await sleep(2000);
+  await sleep(1800);
 
-  await type("Rostro identificado.");
+  await type("Identidad OK");
 
-  await type("Probabilidad coincidencia: 98.7%");
+  cam.style.display="none";
 
-  face.style.display="none";
-
-  button("CONTINUAR PROCESO", hack);
+  button("CONTINUAR", hack);
 
 }
 
 //////////////////////////////////////////////////////
-// HACK SEQUENCE
+// HACK
 //////////////////////////////////////////////////////
 
 async function hack(){
@@ -278,17 +276,13 @@ async function hack(){
 
   document.body.classList.add("glitch");
 
-  speak("Accediendo sistema interno");
+  speak("Acceso interno");
 
-  await type("Sincronizando red neuronal...");
+  await type("Red conectada");
 
-  await type("Acceso parcial concedido.");
+  await type("⚠ alerta ⚠");
 
-  await type("⚠ anomalía detectada ⚠");
-
-  await sleep(1200);
-
-  button("INTERRUMPIR", panic);
+  button("DETENER", panic);
 
 }
 
@@ -302,21 +296,19 @@ async function panic(){
 
   document.body.classList.add("red");
 
-  speak("Intento de interrupción detectado");
+  speak("Bloqueo activo");
 
-  await type("Cancelación denegada.");
+  await type("Cancelado");
 
-  await type("Bloqueo de sistema iniciado...");
+  await type("Sistema bloqueado");
 
   setTimeout(()=>{
 
     document.getElementById("crash").style.display="flex";
 
-    speak("Sistema colapsado");
+    speak("Colapso");
 
-    document.body.style.filter="brightness(0.4) contrast(200%)";
-
-  },3000);
+  },2500);
 
 }
 
@@ -324,11 +316,12 @@ async function panic(){
 // BUTTON
 //////////////////////////////////////////////////////
 
-function button(text,fn){
+function button(t,fn){
 
   terminal.innerHTML+=`
-    <button class="btn" onclick="${fn.name}()">${text}</button>
+    <button class="btn" onclick="${fn.name}()">${t}</button>
   `;
+
 }
 
 //////////////////////////////////////////////////////
