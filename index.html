@@ -1,122 +1,335 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="utf-8" />
+  <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <title>Simulación de incidente</title>
+  <title>Secuencia dramática</title>
   <style>
-    :root{--bg:#030507;--fg:#d7ffe0;--green:#39ff88;--red:#ff3b3b;--amber:#ffb020;--panel:rgba(10,16,12,.82);--line:rgba(80,255,160,.18)}
-    html,body{margin:0;height:100%;background:var(--bg);color:var(--fg);font-family:ui-monospace,Menlo,Consolas,monospace;overflow:hidden}
-    body::before{content:'';position:fixed;inset:0;background:linear-gradient(rgba(255,255,255,.03),rgba(255,255,255,0) 2px);background-size:100% 3px;pointer-events:none;mix-blend-mode:overlay;opacity:.18}
-    body::after{content:'';position:fixed;inset:0;background:radial-gradient(circle at center, transparent 0 35%, rgba(0,0,0,.45) 100%);pointer-events:none}
-    .wrap{position:relative;width:100%;height:100%;display:flex;align-items:center;justify-content:center;padding:16px;box-sizing:border-box}
-    .grid{width:min(100%,980px);height:100%;display:grid;grid-template-rows:auto auto 1fr auto;gap:12px}
-    .top,.mid,.log,.bottom{background:var(--panel);border:1px solid var(--line);box-shadow:0 0 0 1px rgba(0,0,0,.4) inset, 0 0 40px rgba(57,255,136,.06);backdrop-filter:blur(6px)}
-    .top{display:flex;justify-content:space-between;align-items:center;padding:12px 14px;font-size:12px;letter-spacing:.08em;text-transform:uppercase}
-    .mid{padding:14px;border-left:4px solid var(--red);animation:glitch 2.7s infinite alternate}
-    .title{font-size:clamp(26px,6vw,58px);line-height:1.05;color:#fff;text-shadow:0 0 12px rgba(255,59,59,.4),0 0 24px rgba(57,255,136,.18)}
-    .subtitle{margin-top:8px;color:#b8c9bf;font-size:clamp(13px,2.8vw,18px)}
-    .warn{margin-top:12px;color:var(--amber)}
-    .log{padding:12px;overflow:auto;font-size:13px;line-height:1.5}
-    .line{display:block;white-space:pre-wrap;word-break:break-word}
-    .green{color:var(--green)}.red{color:var(--red)}.amber{color:var(--amber)}
-    .bottom{display:flex;flex-wrap:wrap;gap:10px;justify-content:space-between;align-items:center;padding:12px}
-    button{appearance:none;border:1px solid rgba(57,255,136,.35);background:#07110a;color:var(--fg);padding:12px 14px;border-radius:12px;font:inherit;cursor:pointer;box-shadow:0 0 18px rgba(57,255,136,.08)}
-    button.primary{background:linear-gradient(180deg,#112316,#07110a);color:#fff}
-    .note{font-size:12px;opacity:.8}
-    .blink{animation:blink 1s steps(1,end) infinite}
-    .scan{position:fixed;inset:0;pointer-events:none;background:linear-gradient(to bottom, transparent, rgba(57,255,136,.08), transparent);animation:scan 4s linear infinite}
-    .noise{position:fixed;inset:-20%;pointer-events:none;background-image:url('data:image/svg+xml;utf8,<svg xmlns="%22http://www.w3.org/2000/svg%22" width="120" height="120"><filter id="n"><feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" stitchTiles="stitch"/></filter><rect width="120" height="120" filter="url(%23n)" opacity=".22"/></svg>');mix-blend-mode:screen;opacity:.07;transform:translate3d(0,0,0)}
-    @keyframes blink{50%{opacity:0}}
-    @keyframes scan{0%{transform:translateY(-100%)}100%{transform:translateY(100%)}}
-    @keyframes glitch{0%,100%{transform:translate(0)}20%{transform:translate(-1px,1px)}40%{transform:translate(1px,-1px)}60%{transform:translate(-2px,0)}80%{transform:translate(2px,1px)}}
-    .fs .bottom .hint{display:none}
+    :root {
+      --bg: #020405;
+      --green: #35ff8a;
+      --red: #ff2323;
+      --text: #e9f7ee;
+    }
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: radial-gradient(circle at center, #081116 0%, var(--bg) 58%, #000 100%);
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      color: var(--text);
+      touch-action: manipulation;
+    }
+    .wrap {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 18px;
+      z-index: 20;
+    }
+    .panel {
+      width: min(94vw,760px);
+      min-height: min(86vh,720px);
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: 22px;
+      background: rgba(0,0,0,.55);
+      box-shadow: 0 0 40px rgba(0,0,0,.55), inset 0 0 40px rgba(0,255,120,.05);
+      backdrop-filter: blur(4px);
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+      overflow: hidden;
+    }
+    .top {
+      text-align: center;
+      margin-top: 8px;
+    }
+    .label {
+      color: var(--green);
+      text-shadow: 0 0 10px rgba(53,255,138,.5);
+      letter-spacing: .22em;
+      font-weight: 800;
+      font-size: clamp(16px,4vw,28px);
+      text-transform: uppercase;
+    }
+    .sub {
+      margin-top: 10px;
+      opacity: .72;
+      font-size: 14px;
+    }
+    .center-image {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin: 12px 0 16px;
+    }
+    .center-image img {
+      width: min(32vw,180px);
+      max-width: 180px;
+      height: auto;
+      filter: drop-shadow(0 0 12px rgba(255,255,255,.18));
+      opacity: .95;
+    }
+    .terminal {
+      flex: 1;
+      display: grid;
+      place-items: center;
+      gap: 14px;
+      padding: 10px 10px 12px;
+      text-align: center;
+    }
+    .line {
+      min-height: 1.4em;
+      font-size: clamp(18px,4.8vw,32px);
+      line-height: 1.25;
+      letter-spacing: .03em;
+      opacity: 0;
+      transform: translateY(10px);
+      transition: opacity .35s ease, transform .35s ease;
+      text-shadow: 0 0 10px rgba(53,255,138,.15);
+    }
+    .line.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .device-clock {
+      font-size: clamp(16px, 4vw, 24px);
+      color: #8fffb8;
+      opacity: .9;
+      text-shadow: 0 0 8px rgba(53,255,138,.25);
+      letter-spacing: .04em;
+      text-align: center;
+      min-height: 1.4em;
+    }
+    .finale {
+      display: none;
+      margin-top: 10px;
+      font-size: clamp(34px,9vw,72px);
+      font-weight: 900;
+      color: var(--red);
+      text-shadow: 0 0 12px rgba(255,35,35,.7), 0 0 30px rgba(255,35,35,.3);
+      letter-spacing: .05em;
+      text-transform: uppercase;
+      animation: blinkRed .55s steps(2,end) infinite;
+    }
+    @keyframes blinkRed {
+      0%, 100% { opacity: 1; }
+      50% { opacity: .2; }
+    }
+    .controls {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: center;
+      padding-bottom: 4px;
+    }
+    button {
+      border: 0;
+      border-radius: 16px;
+      padding: 14px 16px;
+      font-size: 16px;
+      font-weight: 800;
+      color: #fff;
+      cursor: pointer;
+      background: linear-gradient(180deg, #1f8d4e, #0e5c32);
+      box-shadow: 0 10px 24px rgba(0,0,0,.35);
+      min-width: 140px;
+    }
+    button.secondary {
+      background: linear-gradient(180deg, #3b3b3b, #202020);
+    }
+    button:disabled {
+      opacity: .6;
+      cursor: not-allowed;
+    }
+    .scan {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background: repeating-linear-gradient(
+        to bottom,
+        rgba(255,255,255,.035) 0px,
+        rgba(255,255,255,.035) 1px,
+        transparent 2px,
+        transparent 5px
+      );
+      opacity: .22;
+      mix-blend-mode: screen;
+      z-index: 10;
+    }
+    .crack-screen {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.82);
+      z-index: 30;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .45s;
+      flex-direction: column;
+      gap: 28px;
+    }
+    .crack-screen.show {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .hacker {
+      width: min(72vw, 340px);
+      max-width: 340px;
+      height: auto;
+      filter: drop-shadow(0 0 18px rgba(255,255,255,.18)) drop-shadow(0 0 30px rgba(53,255,138,.15));
+      border-radius: 18px;
+    }
+    .crack-screen .message {
+      color: var(--red);
+      text-shadow: 0 0 12px rgba(255,255,255,.75), 0 0 40px rgba(255,0,0,.35);
+      font-size: clamp(28px,9vw,60px);
+      font-weight: 900;
+      text-align: center;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      animation: shakeCrack .18s linear 10;
+    }
+    @keyframes shakeCrack {
+      0%   { transform: translate(0,0); }
+      25%  { transform: translate(2px,-1px); }
+      50%  { transform: translate(-2px,1px); }
+      75%  { transform: translate(1px,2px); }
+      100% { transform: translate(0,0); }
+    }
+    .footer {
+      text-align: center;
+      font-size: 12px;
+      opacity: .65;
+      margin-top: 10px;
+    }
   </style>
 </head>
 <body>
-  <div class="noise"></div><div class="scan"></div>
   <div class="wrap">
-    <div class="grid" id="app">
+    <div class="panel" id="panel">
       <div class="top">
-        <div>Red segura · modo simulación</div>
-        <div id="clock">00:00:00</div>
+        <div class="label">VER MENU COMPLETO</div>
+        <div class="sub">Todos los platos se actualizan diariamente</div>
       </div>
-      <div class="mid">
-        <div class="title">COMPLETAR INSTALACION</div>
-        <div class="subtitle">Instalar aplicación en el dispositivo. Desea cancelar la instalación...</div>
-        <div class="warn blink">Fallo en la instalación.</div>
+
+      <div class="center-image">
+        <img src="https://pplx-res.cloudinary.com/image/upload/pplx_search_images/bcf42679776c93e4074cf41131f9286f2b606dcf.jpg" alt="Cubiertos de menú" />
       </div>
-      <div class="log" id="log"></div>
-      <div class="bottom">
-        <div>
-          <button class="primary" id="start">Cancelar la instalación</button>
-          <button id="sound">Activar sonido</button>
-          <button id="escape">Continuar</button>
+
+      <div class="terminal">
+        <div class="line" id="l1"></div>
+        <div class="line" id="l2"></div>
+        <div class="line" id="l3"></div>
+        <div class="line" id="l4"></div>
+        <div class="device-clock" id="deviceClock"></div>
+        <div class="finale" id="finale">INICIO DE SESIÓN EN TU CUENTA COMPLETADO</div>
+      </div>
+
+      <div>
+        <div class="controls">
+          <button id="start">Ver menu completo</button>
+          <button class="secondary" id="fs">Ver a pantalla completa</button>
         </div>
-        <div class="note hint">Esta aplicación garantiza la protección y el cifrado de sus datos, asegurando la máxima seguridad y confidencialidad de la información.</div>
+        <div class="footer">El menu ha sido confeccionado con garantias de salud.</div>
       </div>
     </div>
   </div>
+
+  <div class="scan"></div>
+
+  <div class="crack-screen" id="crack">
+    <img class="hacker" src="https://user-gen-media-assets.s3.amazonaws.com/gpt4o_images/d2f47dd4-bb16-45a4-9f2f-04e414c63020.png" alt="Persona con antifaz de hacker" />
+    <div class="message">HACKEADO CON EXITO</div>
+  </div>
+
   <script>
+    const start = document.getElementById('start');
+    const fs = document.getElementById('fs');
+    const crack = document.getElementById('crack');
+    const finale = document.getElementById('finale');
+    const deviceClock = document.getElementById('deviceClock');
+
     const lines = [
-      '[01] Error al descargar los datos...',
-      '[02] Comprobando el software del dispositivo...',
-      '[03] Descargando Contraseñas...',
-      '[04] Descargando datos almacenados',
-      '[05] Descargando lista de contactos',
-      '[06] Acceso remoto satisfactorio',
-      '[07] Registrando ataque exterior...',
-      '[08] Escaneo completo de los contactos',
-      '[09] Reinicio falso en 3... 2... 1...',
-      '[10] Advertencia: Ataque en curso'
+      "Acceso total a la base de datos",
+	  "Copiando contraseñas",
+      "Descargando Imágenes y Contactos",
+      "Acceso remoto confirmado"
     ];
-    const log = document.getElementById('log');
-    const clock = document.getElementById('clock');
-    const app = document.getElementById('app');
-    let i = 0, audioCtx, oscillator, gain;
+    const els = [
+      document.getElementById('l1'),
+      document.getElementById('l2'),
+      document.getElementById('l3'),
+      document.getElementById('l4')
+    ];
 
-    function tick(){ clock.textContent = new Date().toLocaleTimeString('es-ES'); }
-    setInterval(tick,1000); tick();
+    const sleep = ms => new Promise(r => setTimeout(r, ms));
 
-    function addLine(){
-      if(i<lines.length){
-        const s=document.createElement('span');
-        s.className='line';
-        s.innerHTML = `<span class='green'>${lines[i].slice(0,4)}</span>${lines[i].slice(4)}`;
-        log.appendChild(s);
-        log.scrollTop = log.scrollHeight;
-        i++;
+    function updateDeviceClock() {
+      const now = new Date();
+      const fecha = now.toLocaleDateString('es-ES', {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      });
+      const hora = now.toLocaleTimeString('es-ES', {
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit'
+      });
+      deviceClock.textContent = `Hora del dispositivo: ${hora} · Fecha: ${fecha}`;
+    }
+
+    updateDeviceClock();
+    setInterval(updateDeviceClock, 1000);
+
+    async function run() {
+      start.disabled = true;
+      crack.classList.remove('show');
+      finale.style.display = 'none';
+      els.forEach(el => {
+        el.classList.remove('show');
+        el.textContent = '';
+      });
+
+      for (let i = 0; i < lines.length; i++) {
+        await sleep(1800);  // <-- TIEMPO ENTRE FRASES: 1200 ms (1.2 seg). Auméntalo para hacerlas más lentas
+        els[i].textContent = lines[i];
+        els[i].classList.add('show');
       }
+
+      await sleep(2800);  // <-- TIEMPO ANTES DE "ERROR: ACCESO DETECTADO": 1800 ms (1.8 seg)
+      els[3].textContent = "ERROR: ACCESO DETECTADO";
+      els[3].classList.add('show');
+
+      await sleep(2800);  // <-- TIEMPO ANTES DEL MENSAJE FINAL: 1500 ms (1.5 seg)
+      finale.style.display = 'block';
+
+      await sleep(3800);  // <-- TIEMPO ANTES DE APARECER EL HACKER: 2000 ms (2 seg)
+      crack.classList.add('show');
+      start.disabled = false;
     }
 
-    function startSound(){
-      if(audioCtx) return;
-      const AC = window.AudioContext || window.webkitAudioContext;
-      if(!AC) return;
-      audioCtx = new AC();
-      gain = audioCtx.createGain();
-      gain.gain.value = 0.03;
-      gain.connect(audioCtx.destination);
-      oscillator = audioCtx.createOscillator();
-      oscillator.type = 'sawtooth';
-      oscillator.frequency.value = 42;
-      oscillator.connect(gain);
-      oscillator.start();
-      setInterval(()=>{ if(audioCtx && audioCtx.state==='running') oscillator.frequency.setValueAtTime(38 + Math.random()*28, audioCtx.currentTime); }, 1200);
-    }
+    start.addEventListener('click', run);
 
-    async function enterFS(){ try{ await document.documentElement.requestFullscreen(); app.classList.add('fs'); } catch(e){} }
-    async function leaveFS(){ try{ if(document.fullscreenElement) await document.exitFullscreen(); app.classList.remove('fs'); } catch(e){} }
-
-    document.getElementById('start').addEventListener('click', async ()=>{
-      await enterFS();
-      startSound();
-      for(let j=0;j<4;j++){ setTimeout(addLine, j*700); }
-      setInterval(addLine, 900);
+    fs.addEventListener('click', async () => {
+      try {
+        if (!document.fullscreenElement) {
+          await document.documentElement.requestFullscreen();
+        } else {
+          await document.exitFullscreen();
+        }
+      } catch (e) {}
     });
-    document.getElementById('sound').addEventListener('click', startSound);
-    document.getElementById('escape').addEventListener('click', leaveFS);
-    for(let k=0;k<2;k++) setTimeout(addLine, k*1000);
   </script>
 </body>
 </html>
